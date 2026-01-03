@@ -8,3 +8,4 @@ gold accents- premium feel
 teal accents- staying true to the logo
 
 i wanted the ui to be simple,straight forward
+it took me multiple prompts to get this to how i envisioned
