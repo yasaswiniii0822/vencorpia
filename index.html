@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vencorpia - Intelligent Event Management</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    
+    * {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    }
+
+    .gradient-bg {
+      background: linear-gradient(165deg, #0a0e27 0%, #1a1d35 50%, #0f1229 100%);
+    }
+
+    .ai-flow-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.15;
+      overflow: hidden;
+    }
+
+    .ai-node {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: #c9a961;
+      border-radius: 50%;
+      box-shadow: 0 0 12px rgba(201, 169, 97, 0.6);
+      animation: pulse 3s ease-in-out infinite;
+    }
+
+    .ai-line {
+      position: absolute;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201, 169, 97, 0.3), transparent);
+      transform-origin: left center;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.5); }
+    }
+
+    @keyframes flowLine {
+      0% { transform: scaleX(0); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: scaleX(1); opacity: 0; }
+    }
+
+    .feature-card {
+      background: rgba(26, 29, 53, 0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(201, 169, 97, 0.1);
+      transition: all 180ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .feature-card:hover {
+      background: rgba(26, 29, 53, 0.8);
+      border-color: rgba(201, 169, 97, 0.25);
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #c9a961 0%, #b89449 100%);
+      box-shadow: 0 4px 16px rgba(201, 169, 97, 0.25);
+      transition: all 180ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 6px 24px rgba(201, 169, 97, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid rgba(201, 169, 97, 0.3);
+      transition: all 180ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(201, 169, 97, 0.08);
+      border-color: rgba(201, 169, 97, 0.5);
+    }
+
+    .trust-badge {
+      background: rgba(99, 102, 241, 0.08);
+      border: 1px solid rgba(99, 102, 241, 0.15);
+      backdrop-filter: blur(8px);
+    }
+
+    .stat-card {
+      background: rgba(15, 18, 41, 0.5);
+      border: 1px solid rgba(201, 169, 97, 0.12);
+      backdrop-filter: blur(10px);
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <div class="w-full h-full gradient-bg text-white overflow-auto"><!-- AI Flow Background -->
+   <div class="ai-flow-bg" id="aiFlowBg"></div><!-- Navigation -->
+   <nav class="relative z-10 px-6 py-5 flex items-center justify-between max-w-7xl mx-auto">
+    <div class="flex items-center space-x-2">
+     <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-yellow-600 to-yellow-700 flex items-center justify-center">
+      <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+      </svg>
+     </div><span class="text-xl font-semibold tracking-tight">Vencorpia</span>
+    </div>
+    <div class="hidden md:flex items-center space-x-8 text-sm"><a href="#" class="text-gray-300 hover:text-white transition-colors">Platform</a> <a href="#" class="text-gray-300 hover:text-white transition-colors">Marketplace</a> <a href="#" class="text-gray-300 hover:text-white transition-colors">For Vendors</a> <a href="#" class="text-gray-300 hover:text-white transition-colors">Enterprise</a>
+    </div>
+    <div class="flex items-center space-x-4"><button class="text-sm text-gray-300 hover:text-white transition-colors">Sign In</button> <button class="btn-secondary px-4 py-2 rounded-lg text-sm font-medium">Get Started</button>
+    </div>
+   </nav><!-- Hero Section -->
+   <section class="relative z-10 px-6 pt-20 pb-32 max-w-7xl mx-auto">
+    <div class="max-w-4xl mx-auto text-center"><!-- Trust Badge -->
+     <div class="inline-flex items-center space-x-2 trust-badge px-4 py-2 rounded-full text-xs font-medium text-indigo-200 mb-8">
+      <svg class="w-4 h-4" fill="currentColor" viewbox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+      </svg><span>Trusted by 12,000+ event organizers globally</span>
+     </div><!-- Main Headline -->
+     <h1 id="mainHeadline" class="text-5xl md:text-7xl font-bold leading-tight mb-6 tracking-tight">Plan Any Event.<br>
+      Instantly. Intelligently.</h1><!-- Subtext -->
+     <p id="heroSubtext" class="text-lg md:text-xl text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed font-light">AI-powered planning, real-time vendor booking, and smart budget optimization — all in one place.</p><!-- CTA Buttons -->
+     <div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4 mb-16"><button id="primaryCta" class="btn-primary px-8 py-4 rounded-lg text-base font-semibold text-gray-900 w-full sm:w-auto"> Start Planning </button> <button id="secondaryCta" class="btn-secondary px-8 py-4 rounded-lg text-base font-medium w-full sm:w-auto"> Explore Marketplace </button>
+     </div><!-- Stats -->
+     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-3xl mx-auto">
+      <div class="stat-card p-6 rounded-xl">
+       <div class="text-3xl font-bold text-yellow-500 mb-1">
+        12,000+
+       </div>
+       <div class="text-sm text-gray-400">
+        Events Planned
+       </div>
+      </div>
+      <div class="stat-card p-6 rounded-xl">
+       <div class="text-3xl font-bold text-yellow-500 mb-1">
+        5,800+
+       </div>
+       <div class="text-sm text-gray-400">
+        Verified Vendors
+       </div>
+      </div>
+      <div class="stat-card p-6 rounded-xl">
+       <div class="text-3xl font-bold text-yellow-500 mb-1">
+        94%
+       </div>
+       <div class="text-sm text-gray-400">
+        Satisfaction Rate
+       </div>
+      </div>
+     </div>
+    </div>
+   </section><!-- Events We Power Section -->
+   <section class="relative z-10 px-6 py-24 max-w-7xl mx-auto">
+    <div class="text-center mb-16">
+     <h2 class="text-3xl md:text-5xl font-bold mb-4">Events We Power</h2>
+     <p class="text-gray-400 text-lg max-w-2xl mx-auto">From intimate gatherings to enterprise-scale productions, our AI adapts to every occasion</p>
+    </div><!-- Corporate Events -->
+    <div class="mb-20">
+     <div class="flex items-center mb-8">
+      <div class="w-1 h-8 bg-gradient-to-b from-yellow-600 to-yellow-700 mr-4"></div>
+      <h3 class="text-2xl font-semibold">Corporate &amp; Enterprise</h3>
+     </div>
+     <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+      <div class="feature-card p-6 rounded-xl group cursor-pointer">
+       <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-yellow-600/20 to-yellow-700/20 flex items-center justify-center mb-4 group-hover:from-yellow-600/30 group-hover:to-yellow-700/30 transition-all">
+        <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+        </svg>
+       </div>
+       <h4 class="font-semibold mb-2">Corporate Conferences</h4>
+       <p class="text-sm text-gray-400 leading-relaxed">Multi-day summits, keynotes, breakout sessions</p>
+      </div>
+      <div class="feature-card p-6 rounded-xl group cursor-pointer">
+       <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-yellow-600/20 to-yellow-700/20 flex items-center justify-center mb-4 group-hover:from-yellow-600/30 group-hover:to-yellow-700/30 transition-all">
+        <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+        </svg>
+       </div>
+       <h4 class="font-semibold mb-2">Team Retreats</h4>
+       <p class="text-sm text-gray-400 leading-relaxed">Off-sites, workshops, team building activities</p>
+      </div>
+      <div class="feature-card p-6 rounded-xl group cursor-pointer">
+       <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-yellow-600/20 to-yellow-700/20 flex items-center justify-center mb-4 group-hover:from-yellow-600/30 group-hover:to-yellow-700/30 transition-all">
+        <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+        </svg>
+       </div>
+       <h4 class="font-semibold mb-2">Product Launches</h4>
+       <p class="text-sm text-gray-400 leading-relaxed">Press events, unveilings, media coverage</p>
+      </div>
+      <div class="feature-card p-6 rounded-xl group cursor-pointer">
+       <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-yellow-600/20 to-yellow-700/20 flex items-center justify-center mb-4 group-hover:from-yellow-600/30 group-hover:to-yellow-700/30 transition-all">
+        <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+       </div>
+       <h4 class="font-semibold mb-2">Fundraising Galas</h4>
+       <p class="text-sm text-gray-400 leading-relaxed">Charity events, donor dinners, auctions</p>
+      </div>
+     </div>
+    </div><!-- Social & Personal Events -->
+    <div class="mb-20">
+     <div class="flex items-center mb-8">
+      <div class="w-1 h-8 bg-gradient-to-b from-teal-600 to-teal-700 mr-4"></div>
+      <h3 class="text-2xl font-semibold">Social &amp; Personal</h3>
+     </div>
+     <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+      <div class="feature-card p-6 rounded-xl group cursor-pointer">
+       <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-teal-600/20 to-teal-700/20 flex items-center justify-center mb-4 group-hover:from-teal-600/30 group-hover:to-teal-700/30 transition-all">
+        <svg class="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+        </svg>
+       </div>
+       <h4 class="font-semibold mb-2">Weddings</h4>
+       <p class="text-sm text-gray-400 leading-relaxed">Ceremonies, receptions, multi-day celebrations</p>
+      </div>
+      <div class="feature-card p-6 rounded-xl group cursor-pointer">
+       <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-teal-600/20 to-teal-700/20 flex items-center justify-center mb-4 group-hover:from-teal-600/30 group-hover:to-teal-700/30 transition-all">
+        <svg class="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"></path>
+        </svg>
+       </div>
+       <h4 class="font-semibold mb-2">Milestone Birthdays</h4>
+       <p class="text-sm text-gray-400 leading-relaxed">Themed parties, surprise celebrations, venues</p>
+      </div>
+      <div class="feature-card p-6 rounded-xl group cursor-pointer">
+       <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-teal-600/20 to-teal-700/20 flex items-center justify-center mb-4 group-hover:from-teal-600/30 group-hover:to-teal-700/30 transition-all">
+        <svg class="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+        </svg>
+       </div>
+       <h4 class="font-semibold mb-2">Family Reunions</h4>
+       <p class="text-sm text-gray-400 leading-relaxed">Multi-generational gatherings, accommodations</p>
+      </div>
+      <div class="feature-card p-6 rounded-xl group cursor-pointer">
+       <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-teal-600/20 to-teal-700/20 flex items-center justify-center mb-4 group-hover:from-teal-600/30 group-hover:to-teal-700/30 transition-all">
+        <svg class="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+       </div>
+       <h4 class="font-semibold mb-2">Engagement Parties</h4>
+       <p class="text-sm text-gray-400 leading-relaxed">Intimate dinners, cocktail receptions</p>
+      </div>
+     </div>
+    </div><!-- Cultural & Community Events -->
+    <div class="mb-20">
+     <div class="flex items-center mb-8">
+      <div class="w-1 h-8 bg-gradient-to-b from-purple-600 to-purple-700 mr-4"></div>
+      <h3 class="text-2xl font-semibold">Cultural &amp; Community</h3>
+     </div>
+     <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+      <div class="feature-card p-6 rounded-xl group cursor-pointer">
+       <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-600/20 to-purple-700/20 flex items-center justify-center mb-4 group-hover:from-purple-600/30 group-hover:to-purple-700/30 transition-all">
+        <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+       </div>
+       <h4 class="font-semibold mb-2">Cultural Festivals</h4>
+       <p class="text-sm text-gray-400 leading-relaxed">Heritage celebrations, traditional ceremonies</p>
+      </div>
+      <div class="feature-card p-6 rounded-xl group cursor-pointer">
+       <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-600/20 to-purple-700/20 flex items-center justify-center mb-4 group-hover:from-purple-600/30 group-hover:to-purple-700/30 transition-all">
+        <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+        </svg>
+       </div>
+       <h4 class="font-semibold mb-2">Religious Ceremonies</h4>
+       <p class="text-sm text-gray-400 leading-relaxed">Faith-based events, prayer gatherings</p>
+      </div>
+      <div class="feature-card p-6 rounded-xl group cursor-pointer">
+       <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-600/20 to-purple-700/20 flex items-center justify-center mb-4 group-hover:from-purple-600/30 group-hover:to-purple-700/30 transition-all">
+        <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+        </svg>
+       </div>
+       <h4 class="font-semibold mb-2">Non-Profit Events</h4>
+       <p class="text-sm text-gray-400 leading-relaxed">Community fundraisers, awareness campaigns</p>
+      </div>
+      <div class="feature-card p-6 rounded-xl group cursor-pointer">
+       <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-600/20 to-purple-700/20 flex items-center justify-center mb-4 group-hover:from-purple-600/30 group-hover:to-purple-700/30 transition-all">
+        <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+        </svg>
+       </div>
+       <h4 class="font-semibold mb-2">Neighborhood Events</h4>
+       <p class="text-sm text-gray-400 leading-relaxed">Block parties, local gatherings, BBQs</p>
+      </div>
+     </div>
+    </div><!-- Educational & Professional -->
+    <div>
+     <div class="flex items-center mb-8">
+      <div class="w-1 h-8 bg-gradient-to-b from-indigo-600 to-indigo-700 mr-4"></div>
+      <h3 class="text-2xl font-semibold">Educational &amp; Professional</h3>
+     </div>
+     <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+      <div class="feature-card p-6 rounded-xl group cursor-pointer">
+       <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-600/20 to-indigo-700/20 flex items-center justify-center mb-4 group-hover:from-indigo-600/30 group-hover:to-indigo-700/30 transition-all">
+        <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"></path>
+        </svg>
+       </div>
+       <h4 class="font-semibold mb-2">Graduations</h4>
+       <p class="text-sm text-gray-400 leading-relaxed">Ceremonies, after-parties, family celebrations</p>
+      </div>
+      <div class="feature-card p-6 rounded-xl group cursor-pointer">
+       <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-600/20 to-indigo-700/20 flex items-center justify-center mb-4 group-hover:from-indigo-600/30 group-hover:to-indigo-700/30 transition-all">
+        <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+        </svg>
+       </div>
+       <h4 class="font-semibold mb-2">Academic Conferences</h4>
+       <p class="text-sm text-gray-400 leading-relaxed">Research symposiums, panel discussions</p>
+      </div>
+      <div class="feature-card p-6 rounded-xl group cursor-pointer">
+       <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-600/20 to-indigo-700/20 flex items-center justify-center mb-4 group-hover:from-indigo-600/30 group-hover:to-indigo-700/30 transition-all">
+        <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path>
+        </svg>
+       </div>
+       <h4 class="font-semibold mb-2">Networking Events</h4>
+       <p class="text-sm text-gray-400 leading-relaxed">Mixers, professional meetups, speed networking</p>
+      </div>
+      <div class="feature-card p-6 rounded-xl group cursor-pointer">
+       <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-600/20 to-indigo-700/20 flex items-center justify-center mb-4 group-hover:from-indigo-600/30 group-hover:to-indigo-700/30 transition-all">
+        <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
+        </svg>
+       </div>
+       <h4 class="font-semibold mb-2">Training Workshops</h4>
+       <p class="text-sm text-gray-400 leading-relaxed">Professional development, skill-building sessions</p>
+      </div>
+     </div>
+    </div><!-- CTA at bottom of events section -->
+    <div class="mt-16 text-center">
+     <div class="feature-card p-10 rounded-2xl inline-block">
+      <p class="text-xl text-gray-300 mb-6">Don't see your event type? Our AI adapts to any occasion.</p><button class="btn-primary px-8 py-3 rounded-lg text-sm font-semibold text-gray-900"> Tell Us About Your Event </button>
+     </div>
+    </div>
+   </section><!-- Features Section -->
+   <section class="relative z-10 px-6 py-20 max-w-7xl mx-auto">
+    <div class="text-center mb-16">
+     <h2 class="text-3xl md:text-4xl font-bold mb-4">Why Vencorpia</h2>
+     <p class="text-gray-400 text-lg max-w-2xl mx-auto">Enterprise-grade intelligence meets seamless execution</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6"><!-- Feature 1 -->
+     <div class="feature-card p-8 rounded-2xl">
+      <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-600 to-yellow-700 flex items-center justify-center mb-6">
+       <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+       </svg>
+      </div>
+      <h3 class="text-xl font-semibold mb-3">AI Planning Assistant</h3>
+      <p class="text-gray-400 leading-relaxed text-sm">Intelligent recommendations based on your budget, guest count, and preferences. Optimize every decision.</p>
+     </div><!-- Feature 2 -->
+     <div class="feature-card p-8 rounded-2xl">
+      <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-600 to-teal-700 flex items-center justify-center mb-6">
+       <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+       </svg>
+      </div>
+      <h3 class="text-xl font-semibold mb-3">Real-Time Booking</h3>
+      <p class="text-gray-400 leading-relaxed text-sm">Instant vendor availability. No waiting. No back-and-forth. Confirm bookings in seconds with transparent pricing.</p>
+     </div><!-- Feature 3 -->
+     <div class="feature-card p-8 rounded-2xl">
+      <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 to-purple-700 flex items-center justify-center mb-6">
+       <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+       </svg>
+      </div>
+      <h3 class="text-xl font-semibold mb-3">Smart Budget Control</h3>
+      <p class="text-gray-400 leading-relaxed text-sm">AI-driven cost optimization. Track spending in real-time. Never exceed your budget while maintaining quality.</p>
+     </div>
+    </div>
+   </section><!-- Social Proof -->
+   <section class="relative z-10 px-6 py-20 max-w-7xl mx-auto">
+    <div class="feature-card p-12 rounded-2xl text-center">
+     <p class="text-2xl md:text-3xl font-light text-gray-300 mb-8 leading-relaxed max-w-4xl mx-auto">"Vencorpia reduced our event planning time by 68% and saved us over $45,000 on our annual corporate events. The AI suggestions are remarkably accurate."</p>
+     <div class="flex items-center justify-center space-x-4">
+      <div class="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-600 to-yellow-700"></div>
+      <div class="text-left">
+       <div class="font-semibold">
+        Sarah Chen
+       </div>
+       <div class="text-sm text-gray-400">
+        Head of Events, TechCorp Global
+       </div>
+      </div>
+     </div>
+    </div>
+   </section><!-- Final CTA -->
+   <section class="relative z-10 px-6 py-20 max-w-7xl mx-auto">
+    <div class="text-center">
+     <h2 class="text-4xl md:text-5xl font-bold mb-6">Ready to transform your events?</h2>
+     <p class="text-gray-400 text-lg mb-10 max-w-2xl mx-auto">Join thousands of event professionals who trust Vencorpia</p><button class="btn-primary px-10 py-4 rounded-lg text-base font-semibold text-gray-900"> Start Planning Today </button>
+    </div>
+   </section><!-- Footer -->
+   <footer class="relative z-10 px-6 py-12 border-t border-gray-800 max-w-7xl mx-auto">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+     <div>
+      <h4 class="font-semibold mb-4">Product</h4>
+      <ul class="space-y-2 text-sm text-gray-400">
+       <li><a href="#" class="hover:text-white transition-colors">Features</a></li>
+       <li><a href="#" class="hover:text-white transition-colors">Pricing</a></li>
+       <li><a href="#" class="hover:text-white transition-colors">Enterprise</a></li>
+      </ul>
+     </div>
+     <div>
+      <h4 class="font-semibold mb-4">Marketplace</h4>
+      <ul class="space-y-2 text-sm text-gray-400">
+       <li><a href="#" class="hover:text-white transition-colors">Find Vendors</a></li>
+       <li><a href="#" class="hover:text-white transition-colors">Become a Vendor</a></li>
+       <li><a href="#" class="hover:text-white transition-colors">Categories</a></li>
+      </ul>
+     </div>
+     <div>
+      <h4 class="font-semibold mb-4">Company</h4>
+      <ul class="space-y-2 text-sm text-gray-400">
+       <li><a href="#" class="hover:text-white transition-colors">About</a></li>
+       <li><a href="#" class="hover:text-white transition-colors">Careers</a></li>
+       <li><a href="#" class="hover:text-white transition-colors">Contact</a></li>
+      </ul>
+     </div>
+     <div>
+      <h4 class="font-semibold mb-4">Resources</h4>
+      <ul class="space-y-2 text-sm text-gray-400">
+       <li><a href="#" class="hover:text-white transition-colors">Help Center</a></li>
+       <li><a href="#" class="hover:text-white transition-colors">API Docs</a></li>
+       <li><a href="#" class="hover:text-white transition-colors">Blog</a></li>
+      </ul>
+     </div>
+    </div>
+    <div class="pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center text-sm text-gray-400">
+     <p>© 2024 Vencorpia. All rights reserved.</p>
+     <div class="flex space-x-6 mt-4 md:mt-0"><a href="#" class="hover:text-white transition-colors">Privacy</a> <a href="#" class="hover:text-white transition-colors">Terms</a> <a href="#" class="hover:text-white transition-colors">Security</a>
+     </div>
+    </div>
+   </footer>
+  </div>
+  <script>
+    const defaultConfig = {
+      main_headline: "Plan Any Event.<br>Instantly. Intelligently.",
+      hero_subtext: "AI-powered planning, real-time vendor booking, and smart budget optimization — all in one place.",
+      primary_cta: "Start Planning",
+      secondary_cta: "Explore Marketplace",
+      background_color: "#0a0e27",
+      accent_color: "#c9a961",
+      surface_color: "#1a1d35",
+      text_color: "#e5e7eb",
+      primary_action_color: "#c9a961"
+    };
+
+    async function onConfigChange(config) {
+      const mainHeadline = document.getElementById('mainHeadline');
+      const heroSubtext = document.getElementById('heroSubtext');
+      const primaryCta = document.getElementById('primaryCta');
+      const secondaryCta = document.getElementById('secondaryCta');
+
+      if (mainHeadline) {
+        mainHeadline.innerHTML = config.main_headline || defaultConfig.main_headline;
+      }
+      if (heroSubtext) {
+        heroSubtext.textContent = config.hero_subtext || defaultConfig.hero_subtext;
+      }
+      if (primaryCta) {
+        primaryCta.textContent = config.primary_cta || defaultConfig.primary_cta;
+      }
+      if (secondaryCta) {
+        secondaryCta.textContent = config.secondary_cta || defaultConfig.secondary_cta;
+      }
+    }
+
+    function mapToCapabilities(config) {
+      return {
+        recolorables: [
+          {
+            get: () => config.background_color || defaultConfig.background_color,
+            set: (value) => {
+              config.background_color = value;
+              window.elementSdk.setConfig({ background_color: value });
+            }
+          },
+          {
+            get: () => config.accent_color || defaultConfig.accent_color,
+            set: (value) => {
+              config.accent_color = value;
+              window.elementSdk.setConfig({ accent_color: value });
+            }
+          },
+          {
+            get: () => config.surface_color || defaultConfig.surface_color,
+            set: (value) => {
+              config.surface_color = value;
+              window.elementSdk.setConfig({ surface_color: value });
+            }
+          },
+          {
+            get: () => config.text_color || defaultConfig.text_color,
+            set: (value) => {
+              config.text_color = value;
+              window.elementSdk.setConfig({ text_color: value });
+            }
+          },
+          {
+            get: () => config.primary_action_color || defaultConfig.primary_action_color,
+            set: (value) => {
+              config.primary_action_color = value;
+              window.elementSdk.setConfig({ primary_action_color: value });
+            }
+          }
+        ],
+        borderables: [],
+        fontEditable: undefined,
+        fontSizeable: undefined
+      };
+    }
+
+    function mapToEditPanelValues(config) {
+      return new Map([
+        ["main_headline", config.main_headline || defaultConfig.main_headline],
+        ["hero_subtext", config.hero_subtext || defaultConfig.hero_subtext],
+        ["primary_cta", config.primary_cta || defaultConfig.primary_cta],
+        ["secondary_cta", config.secondary_cta || defaultConfig.secondary_cta]
+      ]);
+    }
+
+    // Initialize AI background nodes
+    function initAIBackground() {
+      const container = document.getElementById('aiFlowBg');
+      const nodeCount = 20;
+
+      for (let i = 0; i < nodeCount; i++) {
+        const node = document.createElement('div');
+        node.className = 'ai-node';
+        node.style.left = `${Math.random() * 100}%`;
+        node.style.top = `${Math.random() * 100}%`;
+        node.style.animationDelay = `${Math.random() * 3}s`;
+        container.appendChild(node);
+
+        if (i % 3 === 0 && i < nodeCount - 1) {
+          const line = document.createElement('div');
+          line.className = 'ai-line';
+          const x1 = parseFloat(node.style.left);
+          const y1 = parseFloat(node.style.top);
+          const nextNode = container.children[i + 1];
+          if (nextNode) {
+            const x2 = Math.random() * 100;
+            const y2 = Math.random() * 100;
+            const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+            const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+            
+            line.style.left = `${x1}%`;
+            line.style.top = `${y1}%`;
+            line.style.width = `${length}%`;
+            line.style.transform = `rotate(${angle}deg)`;
+            line.style.animation = `flowLine 4s ease-in-out infinite`;
+            line.style.animationDelay = `${Math.random() * 2}s`;
+            container.appendChild(line);
+          }
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initAIBackground();
+    });
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities,
+        mapToEditPanelValues
+      });
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b802b3b7386814b',t:'MTc2NzQxODkwNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
